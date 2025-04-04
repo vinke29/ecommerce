@@ -1,0 +1,372 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    line-height: 1.6;
+    height: 100vh;
+    overflow: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.app-container {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+/* Step 1: Initial Search */
+#step-1 {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #000, #222);
+}
+
+.search-prompt {
+    text-align: center;
+    max-width: 700px;
+    width: 90%;
+}
+
+.search-prompt h1 {
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(45deg, #0066ff, #00ccff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.search-box {
+    display: flex;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+#initial-search {
+    flex: 1;
+    padding: 1.2rem 2rem;
+    border: none;
+    font-size: 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 50px 0 0 50px;
+}
+
+#initial-search::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#start-search {
+    padding: 0 2rem;
+    background: #0066ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s;
+    border-radius: 0 50px 50px 0;
+}
+
+#start-search:hover {
+    background: #0055cc;
+}
+
+.search-hint {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+/* Step 2: Questions */
+#step-2 {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #000, #222);
+}
+
+.question-container {
+    text-align: center;
+    max-width: 800px;
+    width: 90%;
+}
+
+.results-count {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+}
+
+#results-number {
+    color: #0066ff;
+    font-weight: bold;
+}
+
+#current-question {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.options-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.option {
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.option:hover {
+    background: rgba(0, 102, 255, 0.2);
+    border-color: #0066ff;
+}
+
+.option.selected {
+    background: #0066ff;
+    border-color: #0066ff;
+}
+
+/* Step 3: Final Results */
+#step-3 {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+.results-header {
+    position: absolute;
+    top: 2rem;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+}
+
+.results-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.navigation-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: #0066ff;
+}
+
+.results-carousel {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.result-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.result-item.active {
+    opacity: 1;
+}
+
+/* Featured Product with Overlay */
+.featured-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 5%;
+}
+
+.featured-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.featured-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.featured-price .original-price {
+    text-decoration: line-through;
+    color: #ccc;
+    margin-right: 1rem;
+    font-weight: normal;
+}
+
+.featured-quote {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #fff;
+    max-width: 800px;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+
+.featured-buy-button {
+    display: inline-block;
+    background-color: #0066ff;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.featured-buy-button:hover {
+    background-color: #0055cc;
+    transform: translateY(-3px);
+}
+
+/* Carousel Controls */
+.carousel-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 10;
+}
+
+.carousel-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .search-prompt h1 {
+        font-size: 2.5rem;
+    }
+    
+    #current-question {
+        font-size: 2rem;
+    }
+    
+    .featured-title {
+        font-size: 1.8rem;
+    }
+    
+    .featured-price {
+        font-size: 1.5rem;
+    }
+    
+    .featured-quote {
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .search-prompt h1 {
+        font-size: 2rem;
+    }
+    
+    #initial-search, #start-search {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    #current-question {
+        font-size: 1.5rem;
+    }
+    
+    .option {
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .featured-title {
+        font-size: 1.5rem;
+    }
+    
+    .featured-price {
+        font-size: 1.2rem;
+    }
+    
+    .featured-quote {
+        font-size: 0.9rem;
+    }
+    
+    .featured-buy-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+} 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BicycleHub - Find Your Perfect Bike</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Step 1: Initial Search -->
+        <div class="step" id="step-1">
+            <div class="search-prompt">
+                <h1>Find Your Perfect Bike</h1>
+                <div class="search-box">
+                    <input type="text" id="initial-search" placeholder="I'm looking for..." autofocus>
+                    <button id="start-search"><i class="fas fa-arrow-right"></i></button>
+                </div>
+                <p class="search-hint">Try: "a mountain bike for trails" or "a commuter bike for city"</p>
+            </div>
+        </div>
+
+        <!-- Step 2: Questions -->
+        <div class="step" id="step-2" style="display: none;">
+            <div class="question-container">
+                <div class="results-count">
+                    <span id="results-number">15,420</span> bikes found
+                </div>
+                <h2 id="current-question">What type of riding will you be doing?</h2>
+                <div class="options-container" id="options">
+                    <!-- Options will be inserted here via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Final Results -->
+        <div class="step" id="step-3" style="display: none;">
+            <div class="results-header">
+                <h2>Your Perfect Matches</h2>
+                <p>Based on your preferences, we found <span id="final-count">3</span> bikes that match your needs</p>
+                <div class="navigation-dots">
+                    <!-- Navigation dots will be inserted here via JavaScript -->
+                </div>
+            </div>
+            <div class="results-carousel">
+                <!-- Results will be inserted here via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/questions.js"></script>
+    <script src="js/guided-experience.js"></script>
+</body>
+</html> 
