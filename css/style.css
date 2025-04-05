@@ -6,6 +6,11 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Utility Classes */
+.hidden {
+    display: none !important; /* Use !important to override other display styles */
+}
+
 body {
     background-color: #000;
     color: #fff;
@@ -132,22 +137,25 @@ a {
 }
 
 .option {
-    padding: 1rem 2rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50px;
+    padding: 0.8rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s;
+    color: #e0e0e0;
 }
 
 .option:hover {
-    background: rgba(0, 102, 255, 0.2);
-    border-color: #0066ff;
+    background: rgba(0, 102, 255, 0.3);
+    border-color: #007bff;
+    color: #ffffff;
 }
 
 .option.selected {
     background: #0066ff;
     border-color: #0066ff;
+    color: #ffffff;
 }
 
 /* Step 3: Final Results */
@@ -203,12 +211,11 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s;
+    display: none;
 }
 
 .result-item.active {
-    opacity: 1;
+    display: block;
 }
 
 /* Featured Product with Overlay */
@@ -292,24 +299,29 @@ a {
     display: flex;
     justify-content: space-between;
     padding: 0 2rem;
-    z-index: 10;
+    z-index: 20;
+    transform: translateY(-50%);
 }
 
 .carousel-button {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
+    font-size: 1.2rem;
 }
 
 .carousel-button:hover {
     background-color: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
 }
 
 /* Responsive Styles */
@@ -369,4 +381,642 @@ a {
         padding: 0.6rem 1.2rem;
         font-size: 0.9rem;
     }
+}
+
+/* GUIDED EXPERIENCE STEPS */
+.guided-experience {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 600px;
+    position: relative;
+    background-color: #f9f9f9;
+}
+
+/* OPTIONS */
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.option {
+    padding: 15px 20px;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+    min-width: 120px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.option.selected {
+    background-color: #3498db;
+    color: white;
+}
+
+.option-description {
+    font-size: 0.8em;
+    font-style: italic;
+    margin-top: 8px;
+    display: block;
+    opacity: 0.8;
+}
+
+.option.selected .option-description {
+    opacity: 0.9;
+}
+
+/* Flash effect for option selection validation */
+.options.flash {
+    animation: flash 0.4s ease-in-out 2;
+}
+
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Continue button for multiple selections */
+.continue-button-container {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.continue-button {
+    padding: 12px 30px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.continue-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.continue-button:active {
+    transform: translateY(0);
+}
+
+/* Sport selection options styling */
+.option[data-id="bicycles"] {
+    background: rgba(0, 102, 255, 0.1);
+    border-color: rgba(0, 102, 255, 0.3);
+}
+
+.option[data-id="baseball"] {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+.option[data-id="climbing"] {
+    background: rgba(0, 180, 0, 0.1);
+    border-color: rgba(0, 180, 0, 0.3);
+}
+
+.option[data-id="soccer"] {
+    background: rgba(255, 165, 0, 0.1);
+    border-color: rgba(255, 165, 0, 0.3);
+}
+
+/* Sport-specific hover states */
+.option[data-id="bicycles"]:hover, .option[data-id="bicycles"].selected {
+    background: rgba(0, 102, 255, 0.3);
+    border-color: #0066ff;
+}
+
+.option[data-id="baseball"]:hover, .option[data-id="baseball"].selected {
+    background: rgba(255, 0, 0, 0.3);
+    border-color: #ff0000;
+}
+
+.option[data-id="climbing"]:hover, .option[data-id="climbing"].selected {
+    background: rgba(0, 180, 0, 0.3);
+    border-color: #00b400;
+}
+
+.option[data-id="soccer"]:hover, .option[data-id="soccer"].selected {
+    background: rgba(255, 165, 0, 0.3);
+    border-color: #ffa500;
+}
+
+/* Continue button styling */
+.continue-button-container {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.continue-button {
+    padding: 0.8rem 2rem;
+    background: #0066ff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.continue-button:hover {
+    background: #0055cc;
+    transform: translateY(-3px);
+}
+
+/* Flash animation for options */
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.options-container.flash .option {
+    animation: flash 0.4s 2;
+}
+
+/* Restart button */
+.restart-button {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    padding: 0.7rem 1.4rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.restart-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+    .search-prompt h1 {
+        font-size: 2rem;
+    }
+    
+    #current-question {
+        font-size: 1.8rem;
+    }
+    
+    .option {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .featured-title {
+        font-size: 1.8rem;
+    }
+    
+    .restart-button {
+        right: 1rem;
+        top: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* AI and Smart Search Elements */
+.api-key-button {
+    margin-top: 15px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.api-key-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.api-key-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background: #222;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.api-key-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+}
+
+.api-key-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.save-key-button, .cancel-key-button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.save-key-button {
+    background: #0066ff;
+    color: white;
+    border: none;
+}
+
+.save-key-button:hover {
+    background: #0055cc;
+}
+
+.cancel-key-button {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cancel-key-button:hover {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 102, 255, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeInOut 3s ease-in-out forwards;
+    z-index: 1000;
+}
+
+.smart-detection {
+    background: rgba(0, 102, 255, 0.1);
+    border-left: 3px solid #0066ff;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 3px;
+    transition: opacity 0.5s;
+}
+
+.smart-detection.fade-out {
+    opacity: 0;
+}
+
+.option.predicted {
+    position: relative;
+    border-color: #0066ff;
+    box-shadow: 0 0 8px rgba(0, 102, 255, 0.3);
+}
+
+.option.predicted::before {
+    content: '✨';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #0066ff;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+}
+
+.confidence-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #0066ff;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Styling for the modal overlay */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999; /* Should be below the dialog but above everything else */
+}
+
+/* Styling for AI interaction elements */
+.ai-answer-input {
+    width: calc(100% - 80px); /* Adjust width as needed */
+    padding: 10px 15px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+}
+
+.ai-answer-submit {
+    padding: 10px 15px;
+    background: #0066ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ai-answer-submit:hover {
+    background: #0055cc;
+}
+
+.error-message {
+    color: #ff4d4d; /* Red color for errors */
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Styles for Simplified Flow */
+
+.page-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #1a1a1a; /* Slightly lighter background for pages */
+    border-radius: 8px;
+}
+
+#search-page h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #00aaff;
+}
+
+#search-page p {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.search-box-main {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid #444;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+#main-search-input {
+    flex-grow: 1;
+    padding: 15px 25px;
+    border: none;
+    background: #333;
+    color: white;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+#start-finding-button {
+    padding: 0 30px;
+    border: none;
+    background: #007bff;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#start-finding-button:hover {
+    background: #0056b3;
+}
+
+/* Guided Page Styles */
+#guided-page {
+    width: 100%;
+    height: 100vh; /* Take full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #111; /* Slightly lighter than body background */
+    color: #eee; /* Light text color */
+    box-sizing: border-box;
+}
+
+#ai-interaction-area {
+    width: 100%;
+    max-width: 700px; /* Limit width */
+    text-align: center;
+    background-color: #222; /* Darker background for contrast */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+#ai-question-container h2 {
+    font-size: 1.8rem; /* Slightly smaller than original */
+    margin-bottom: 1.5rem;
+    color: #00aaff; /* Use a highlight color */
+}
+
+#ai-options-container {
+    display: flex;
+    flex-direction: column; /* Stack input and button vertically */
+    align-items: center;
+    gap: 1rem; /* Space between input and button */
+}
+
+.ai-answer-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background-color: #333;
+    border: 1px solid #555;
+    color: #eee;
+    border-radius: 4px;
+}
+
+.ai-answer-input::placeholder {
+    color: #888;
+}
+
+.ai-answer-submit {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ai-answer-submit:hover {
+    background-color: #0056b3;
+}
+
+/* Add styles for loading/error messages if needed */
+.loading-message,
+.error-message {
+    color: #aaa;
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+/* Navigation buttons for simplified flow */
+.ai-navigation {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between; /* Align back/skip */
+    width: 100%;
+}
+
+#ai-back-button,
+#ai-skip-button {
+     padding: 0.5rem 1rem;
+     font-size: 0.9rem;
+     border-radius: 4px;
+     cursor: pointer;
+     transition: background-color 0.3s;
+}
+
+#ai-back-button {
+    background-color: #555;
+    border: none;
+    color: #eee;
+}
+#ai-back-button:hover {
+     background-color: #777;
+}
+
+#ai-skip-button {
+     background-color: transparent;
+     border: 1px solid #777;
+     color: #aaa;
+}
+#ai-skip-button:hover {
+     background-color: #333;
+     color: #eee;
+}
+
+/* Final result display */
+#final-result-area {
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    padding: 2rem;
+}
+
+#final-product-display {
+    margin-top: 1rem;
+}
+
+.final-product-card {
+     background-color: #2a2a2a;
+     padding: 1.5rem;
+     border-radius: 8px;
+     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+     color: #eee;
+}
+
+.final-product-image {
+     max-width: 80%;
+     height: auto;
+     margin-bottom: 1rem;
+     border-radius: 4px;
+}
+
+.final-product-card h3 {
+     font-size: 1.5rem;
+     color: #00aaff;
+     margin-bottom: 0.5rem;
+}
+
+.final-price {
+     font-size: 1.2rem;
+     font-weight: bold;
+     color: #50fa7b; /* Green price */
+     margin-top: 0.5rem;
+}
+
+.final-discount {
+     font-size: 1rem;
+     color: #ffb86c; /* Orange discount */
+     text-decoration: line-through;
+     margin-left: 0.5rem;
+}
+
+/* Ensure utility .hidden class works */
+.hidden {
+    display: none !important;
+}
+
+/* Ensure overlay has correct styles */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999; 
 } 

@@ -1,133 +1,186 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Debug logs
-    console.log('DOM loaded');
-    console.log('Bicycle data:', bicycleData);
-    
-    // Initialize the application
-    if (bicycleData && bicycleData.length > 0) {
-        console.log('Loading first bike:', bicycleData[0]);
-        showFeaturedProduct(bicycleData[0]); // Show the first bike by default
-    } else {
-        console.error('No bicycle data available!');
-        document.querySelector('.featured-product').innerHTML = '<p>Error loading bicycle data. Please check your console.</p>';
-    }
-    
-    // Filter pills event listeners
-    const pills = document.querySelectorAll('.pill');
-    pills.forEach(pill => {
-        pill.addEventListener('click', function() {
-            // Remove active class from all pills
-            pills.forEach(p => p.classList.remove('active'));
-            // Add active class to clicked pill
-            this.classList.add('active');
-            
-            // Filter products based on selected pill
-            filterAndShowFeaturedProduct(this.innerText);
-        });
-    });
-    
-    // Search form event listener
-    document.getElementById('search-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
-        // If search query is not empty, filter products
-        if (searchQuery) {
-            searchAndShowFeaturedProduct(searchQuery);
-        } else {
-            // If empty, show default product
-            showFeaturedProduct(bicycleData[0]);
-        }
-    });
+// main-simplified.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeAppSimplified();
 });
 
-// Show a featured product
-function showFeaturedProduct(product) {
-    console.log('Showing product:', product);
-    const featuredSection = document.querySelector('.featured-product');
-    
-    try {
-        const featuredContent = `
-            <div class="featured-image" style="background-image: url('${product.image}')"></div>
-            <div class="featured-info">
-                <h2 class="featured-title">${product.title}</h2>
-                <div class="featured-price">
-                    <span class="original-price">$${product.originalPrice.toFixed(2)}</span>
-                    $${product.price.toFixed(2)}
-                </div>
-                <p class="featured-quote">"${product.reviewSnippet}"</p>
-                <a href="${product.buyLink}" class="featured-buy-button" target="_blank">Buy Now</a>
-            </div>
-        `;
-        
-        featuredSection.innerHTML = featuredContent;
-        console.log('Image URL set to:', product.image);
-    } catch (error) {
-        console.error('Error displaying product:', error);
-        featuredSection.innerHTML = `<p>Error displaying product: ${error.message}</p>`;
-    }
-}
+function initializeAppSimplified() {
+    console.log("Initializing Simplified App...");
 
-// Filter products based on selected pill and show the first matching product
-function filterAndShowFeaturedProduct(filterText) {
-    let filteredProducts = [];
-    
-    switch(filterText) {
-        case 'All':
-            filteredProducts = bicycleData;
-            break;
-        case 'Mountain Bikes':
-            filteredProducts = bicycleData.filter(product => product.type.includes('Mountain') && !product.type.includes('Electric'));
-            break;
-        case 'Road Bikes':
-            filteredProducts = bicycleData.filter(product => product.type.includes('Road'));
-            break;
-        case 'Hybrid Bikes':
-            filteredProducts = bicycleData.filter(product => product.type.includes('Hybrid'));
-            break;
-        case 'Under $200':
-            filteredProducts = bicycleData.filter(product => product.price < 200);
-            break;
-        case '$200-$500':
-            filteredProducts = bicycleData.filter(product => product.price >= 200 && product.price <= 500);
-            break;
-        case 'Over $500':
-            filteredProducts = bicycleData.filter(product => product.price > 500);
-            break;
-        default:
-            filteredProducts = bicycleData;
-    }
-    
-    console.log('Filtered products for', filterText, ':', filteredProducts);
-    
-    // Show the first product from filtered results or a message if none found
-    if (filteredProducts.length > 0) {
-        showFeaturedProduct(filteredProducts[0]);
-    } else {
-        const featuredSection = document.querySelector('.featured-product');
-        featuredSection.innerHTML = '<p>No products match your filter criteria. Please try another filter.</p>';
-    }
-}
+    // --- Page Elements ---
+    const searchPage = document.getElementById('search-page');
+    const guidedPage = document.getElementById('guided-page');
+    const mainSearchInput = document.getElementById('main-search-input');
+    const startFindingButton = document.getElementById('start-finding-button');
+    const searchAgainButton = document.getElementById('search-again-button');
 
-// Search products and show the first matching product
-function searchAndShowFeaturedProduct(query) {
-    const filteredProducts = bicycleData.filter(product => {
-        return (
-            product.title.toLowerCase().includes(query) ||
-            product.description.toLowerCase().includes(query) ||
-            product.type.toLowerCase().includes(query) ||
-            product.idealFor.toLowerCase().includes(query) ||
-            product.features.some(feature => feature.toLowerCase().includes(query))
-        );
+    // --- API Key Dialog Elements ---
+    const apiKeyButton = document.getElementById('api-key-button');
+    const apiKeyDialog = document.getElementById('api-key-dialog');
+    const saveKeyButton = document.getElementById('save-key-button');
+    const cancelKeyButton = document.getElementById('cancel-key-button');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const overlay = document.getElementById('overlay');
+    const emergencyCloseBtn = document.getElementById('emergency-close');
+
+    // --- Input Validation ---
+    if (!searchPage || !guidedPage || !mainSearchInput || !startFindingButton || !searchAgainButton || !apiKeyButton || !apiKeyDialog || !saveKeyButton || !cancelKeyButton || !apiKeyInput || !overlay || !emergencyCloseBtn) {
+        console.error("Initialization failed: One or more essential elements not found in the DOM.");
+        // Optionally display an error message to the user on the page itself
+        document.body.innerHTML = "<p style='color:red; padding: 20px;'>Error: UI elements missing. Cannot initialize application.</p>";
+        return;
+    }
+
+    // --- Initial State ---
+    showPage('search-page'); // Start on the search page
+    updateApiKeyButtonText(); // Set initial text for API key button
+
+    // --- Event Listeners ---
+
+    // Start Finding Button
+    startFindingButton.addEventListener('click', handleStartFinding);
+
+    // Main Search Input (Enter Key)
+    mainSearchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent default form submission
+            handleStartFinding();
+        }
     });
-    
-    // Show the first product from search results or a message if none found
-    if (filteredProducts.length > 0) {
-        showFeaturedProduct(filteredProducts[0]);
-    } else {
-        const featuredSection = document.querySelector('.featured-product');
-        featuredSection.innerHTML = '<p>No products match your search criteria. Please try a different search term.</p>';
+
+    // API Key Button
+    apiKeyButton.addEventListener('click', () => {
+        apiKeyInput.value = localStorage.getItem('openai_api_key') || ''; // Pre-fill if exists
+        apiKeyDialog.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        apiKeyInput.focus();
+    });
+
+    // Save API Key
+    saveKeyButton.addEventListener('click', () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (apiKey && apiKey.startsWith('sk-')) { // Basic validation
+            localStorage.setItem('openai_api_key', apiKey);
+            // Update AI processor instance if it exists
+            if (window.aiProcessorSimplified) {
+                window.aiProcessorSimplified.setApiKey(apiKey);
+            }
+            closeApiKeyDialog();
+            updateApiKeyButtonText();
+            showNotification('API key saved successfully!'); // Assumes showNotification exists (e.g., in utils.js)
+        } else {
+            showNotification('Please enter a valid OpenAI API key (should start with sk-).', 'error');
+        }
+    });
+
+    // Cancel/Close API Key Dialog
+    cancelKeyButton.addEventListener('click', closeApiKeyDialog);
+    overlay.addEventListener('click', closeApiKeyDialog);
+    emergencyCloseBtn.addEventListener('click', closeApiKeyDialog);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !apiKeyDialog.classList.contains('hidden')) {
+            closeApiKeyDialog();
+        }
+    });
+
+    // Search Again Button (on results page)
+    searchAgainButton.addEventListener('click', () => {
+        showPage('search-page'); // Go back to the search page
+        mainSearchInput.value = ''; // Clear the input
+        mainSearchInput.focus();
+    });
+}
+
+// --- Core Functions ---
+
+function handleStartFinding() {
+    const query = document.getElementById('main-search-input').value.trim();
+    if (!query) {
+        showNotification('Please enter what you are looking for.', 'error');
+        return;
     }
-    
-    // Update heading to show search results
-    document.querySelector('.search-results h2').textContent = `Search Results for "${query}"`;
-} 
+
+    // Check if API key is set
+    if (!localStorage.getItem('openai_api_key')) {
+         showNotification('Please set your OpenAI API Key first.', 'error');
+         // Optionally open the dialog directly
+         document.getElementById('api-key-button').click();
+         return;
+    }
+
+    console.log("Starting AI Guided Flow with query:", query);
+    showPage('guided-page'); // Switch to the guided page
+
+    // Call the function from guided-experience-simplified.js to start the AI flow
+    if (typeof startSimplifiedGuidedExperience === 'function') {
+        startSimplifiedGuidedExperience(query);
+    } else {
+        console.error("startSimplifiedGuidedExperience function not found! Check guided-experience-simplified.js.");
+        // Display an error on the guided page if the function is missing
+        const interactionArea = document.getElementById('ai-interaction-area');
+        if(interactionArea) interactionArea.innerHTML = "<p class='error-message'>Error starting guided experience.</p>";
+    }
+}
+
+function showPage(pageId) {
+    console.log("Switching to page:", pageId);
+    const searchPage = document.getElementById('search-page');
+    const guidedPage = document.getElementById('guided-page');
+
+    if (pageId === 'search-page') {
+        if(searchPage) searchPage.classList.remove('hidden');
+        if(guidedPage) guidedPage.classList.add('hidden');
+         // Hide specific parts of guided page when switching back
+         const interactionArea = document.getElementById('ai-interaction-area');
+         const finalResultArea = document.getElementById('final-result-area');
+         if(interactionArea) interactionArea.classList.remove('hidden'); // Show questions area initially
+         if(finalResultArea) finalResultArea.classList.add('hidden'); // Hide results area
+    } else if (pageId === 'guided-page') {
+        if(searchPage) searchPage.classList.add('hidden');
+        if(guidedPage) guidedPage.classList.remove('hidden');
+         // Reset guided page state when switching to it
+         const interactionArea = document.getElementById('ai-interaction-area');
+         const finalResultArea = document.getElementById('final-result-area');
+         if(interactionArea) interactionArea.classList.remove('hidden'); // Ensure interaction area is visible
+         if(interactionArea) interactionArea.innerHTML = '<div id="ai-question-container"></div><div id="ai-options-container"></div><div class="ai-navigation"><button id="ai-back-button" class="secondary-button hidden">Back</button><button id="ai-skip-button" class="tertiary-button hidden">Skip</button></div>'; // Reset content
+         if(finalResultArea) finalResultArea.classList.add('hidden'); // Hide results area
+    } else {
+        console.error("Unknown page ID:", pageId);
+    }
+}
+
+function closeApiKeyDialog() {
+    const apiKeyDialog = document.getElementById('api-key-dialog');
+    const overlay = document.getElementById('overlay');
+    if(apiKeyDialog) apiKeyDialog.classList.add('hidden');
+    if(overlay) overlay.classList.add('hidden');
+}
+
+function updateApiKeyButtonText() {
+     const apiKeyButton = document.getElementById('api-key-button');
+     if (!apiKeyButton) return;
+     if (localStorage.getItem('openai_api_key')) {
+        apiKeyButton.textContent = 'Update API Key';
+    } else {
+        apiKeyButton.textContent = 'Set OpenAI API Key';
+    }
+}
+
+// Placeholder for showNotification - ensure this is defined (e.g., in utils.js)
+function showNotification(message, type = 'success') {
+    console.log(`Notification (${type}): ${message}`);
+    // Actual implementation might create a temporary div element
+    // Example structure:
+    /*
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+             document.body.removeChild(notification);
+        }
+    }, 3000);
+    */
+}
+

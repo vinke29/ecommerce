@@ -3,54 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BicycleHub - Find Your Perfect Bike</title>
+    <title>SportsFinder - Find Your Perfect Match</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Step 1: Initial Search -->
-        <div class="step" id="step-1">
-            <div class="search-prompt">
-                <h1>Find Your Perfect Bike</h1>
-                <div class="search-box">
-                    <input type="text" id="initial-search" placeholder="I'm looking for..." autofocus>
-                    <button id="start-search"><i class="fas fa-arrow-right"></i></button>
-                </div>
-                <p class="search-hint">Try: "a mountain bike for trails" or "a commuter bike for city"</p>
+    <header>
+        <div class="logo-container">
+            <img src="img/logo.png" alt="SportsFinder Logo" class="logo">
+            <h1>SportsFinder</h1>
+        </div>
+        <div class="header-controls">
+            <button id="api-key-button" class="api-key-button">Set OpenAI API Key</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="search-page" class="page-container">
+            <h1>Find Your Perfect Sports Gear</h1>
+            <p>Describe what you're looking for, and we'll guide you to the best options.</p>
+            <div class="search-box-main">
+                <input type="text" id="main-search-input" placeholder="e.g., 'lightweight mountain bike for trails', 'beginner climbing shoes', 'durable soccer ball'">
+                <button id="start-finding-button">Start Finding</button>
             </div>
         </div>
 
-        <!-- Step 2: Questions -->
-        <div class="step" id="step-2" style="display: none;">
-            <div class="question-container">
-                <div class="results-count">
-                    <span id="results-number">15,420</span> bikes found
-                </div>
-                <h2 id="current-question">What type of riding will you be doing?</h2>
-                <div class="options-container" id="options">
-                    <!-- Options will be inserted here via JavaScript -->
+        <div id="guided-page" class="page-container hidden">
+            <div id="ai-interaction-area">
+                <div id="ai-question-container"></div>
+                <div id="ai-options-container"></div>
+                <div class="ai-navigation">
+                    <button id="ai-back-button" class="secondary-button hidden">Back</button>
+                    <button id="ai-skip-button" class="tertiary-button hidden">Skip</button>
                 </div>
             </div>
+            <div id="final-result-area" class="hidden">
+                <h2>Your Recommended Match!</h2>
+                <div id="final-product-display">
+                    <!-- Content populated by JS -->
+                </div>
+                <button id="search-again-button" class="primary-button">Search Again</button>
+            </div>
         </div>
+    </main>
 
-        <!-- Step 3: Final Results -->
-        <div class="step" id="step-3" style="display: none;">
-            <div class="results-header">
-                <h2>Your Perfect Matches</h2>
-                <p>Based on your preferences, we found <span id="final-count">3</span> bikes that match your needs</p>
-                <div class="navigation-dots">
-                    <!-- Navigation dots will be inserted here via JavaScript -->
-                </div>
-            </div>
-            <div class="results-carousel">
-                <!-- Results will be inserted here via JavaScript -->
-            </div>
+    <div id="api-key-dialog" class="api-key-dialog hidden">
+        <h3>Enter Your OpenAI API Key</h3>
+        <p>Your API key enables our smart search feature. It will be stored locally in your browser.</p>
+        <input type="text" id="api-key-input" class="api-key-input" placeholder="sk-...">
+        <div class="api-key-buttons">
+            <button id="cancel-key-button" class="cancel-key-button">Cancel</button>
+            <button id="save-key-button" class="save-key-button">Save</button>
         </div>
+        <button id="emergency-close" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 18px; cursor: pointer;">✕</button>
     </div>
 
+    <div id="overlay" class="overlay hidden"></div>
+
+    <script src="js/config.js"></script>
     <script src="js/data.js"></script>
-    <script src="js/questions.js"></script>
-    <script src="js/guided-experience.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/ai-processor.js"></script>
+    <script src="js/guided-experience-simplified.js"></script>
+    <script src="js/main-simplified.js"></script>
 </body>
 </html> 
