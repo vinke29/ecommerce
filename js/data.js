@@ -297,10 +297,13 @@ const sportsData = {
     ]
 };
 
-// Backwards compatibility for existing code
-const bicycleData = sportsData.bicycles;
+// Make data globally available on the window object
+window.bicycleData = sportsData.bicycles || [];
+window.baseballData = sportsData.baseball || [];
+window.climbingData = sportsData.climbing || [];
+window.soccerData = sportsData.soccer || [];
 
-// Export for use in other files
+// Export for use in other files (Node.js environment, less relevant for browser)
 if (typeof module !== 'undefined') {
-    module.exports = { sportsData, bicycleData };
+    module.exports = { sportsData }; // Only export the main object if needed for Node
 } 

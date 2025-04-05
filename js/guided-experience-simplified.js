@@ -99,10 +99,11 @@ async function startSimplifiedGuidedExperience(initialQuery) {
         if (analysisResult.user_preferences) aiAnswers['detected_preferences'] = analysisResult.user_preferences;
 
         // Prepare questions array
-        currentAIQuestions = analysisResult.suggested_questions.map((q, index) => ({
+        currentAIQuestions = analysisResult.suggested_questions.map((qData, index) => ({
             id: `ai_q_${index}`,
-            question: q,
-            type: 'text' // Assuming text input for now
+            question: qData.question,
+            options: qData.options || [], // Ensure options array exists
+            type: 'multiple-choice' // Set type based on API response structure
         }));
 
         // Start the question sequence
@@ -147,53 +148,51 @@ function loadNextAIQuestion() {
          return; // Stop if question is invalid
     }
 
-    // --- Attempt 1: innerHTML (with logging) ---
-    console.log(`[guided-exp] Attempting to set innerHTML for question: ${question.question}`);
-    currentQuestionContainer.innerHTML = `<h2>${question.question}</h2>`;
+    // --- Display Question and Progress --- 
+    const progressIndicator = `(${currentAIQuestionIndex + 1}/${currentAIQuestions.length})`;
+    currentQuestionContainer.innerHTML = `<h2>${question.question} <span class="question-progress">${progressIndicator}</span></h2>`;
     console.log(`[guided-exp] AFTER setting innerHTML, currentQuestionContainer.innerHTML is:`, currentQuestionContainer.innerHTML);
     
-    // --- Check if it worked --- 
-    if (!currentQuestionContainer.querySelector('h2')) {
-        console.error('[guided-exp] FAILED to set question using innerHTML. Trying alternative method.');
-        // --- Attempt 2: Manual Element Creation ---
-        currentQuestionContainer.innerHTML = ''; // Clear again just in case
-        const h2Element = document.createElement('h2');
-        h2Element.textContent = question.question;
-        currentQuestionContainer.appendChild(h2Element);
-        console.log(`[guided-exp] AFTER alternative appendChild, currentQuestionContainer.innerHTML is:`, currentQuestionContainer.innerHTML);
-    } else {
-        console.log('[guided-exp] innerHTML method seems to have worked.');
-    }
-
     // --- Continue with Options --- 
     currentOptionsContainer.innerHTML = ''; // Clear previous options
     console.log('[guided-exp] Cleared options container');
 
-    // Create input field and button (assuming type 'text')
-    const inputElement = document.createElement('input');
-    inputElement.type = 'text';
-    inputElement.id = `answer_${question.id}`;
-    inputElement.placeholder = 'Your answer here...';
-    inputElement.className = 'ai-answer-input';
+    // --- Create Option Buttons --- 
+    if (question.type === 'multiple-choice' && question.options && question.options.length > 0) {
+        question.options.forEach(optionText => {
+            const optionButton = document.createElement('button');
+            optionButton.textContent = optionText;
+            optionButton.className = 'ai-option-button'; // New class for styling
+            optionButton.onclick = () => handleAISubmit(question.id, optionText);
+            currentOptionsContainer.appendChild(optionButton);
+        });
+        console.log(`[guided-exp] Appended ${question.options.length} option buttons.`);
+    } else {
+        // Fallback to text input if needed (though prompt asks for options)
+        console.warn('[guided-exp] Question type not multiple-choice or no options provided. Falling back to text input.');
+        const inputElement = document.createElement('input');
+        inputElement.type = 'text';
+        inputElement.id = `answer_${question.id}`;
+        inputElement.placeholder = 'Your answer here...';
+        inputElement.className = 'ai-answer-input'; // Existing class
 
-    const submitButton = document.createElement('button');
-    submitButton.textContent = 'Next';
-    submitButton.className = 'ai-answer-submit';
-    submitButton.onclick = () => handleAISubmit(question.id, inputElement.value);
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Next';
+        submitButton.className = 'ai-answer-submit'; // Existing class
+        submitButton.onclick = () => handleAISubmit(question.id, inputElement.value);
 
-    // *** Use local variables for appending ***
-    currentOptionsContainer.appendChild(inputElement);
-    currentOptionsContainer.appendChild(submitButton);
-    console.log('[guided-exp] Appended input and button to options container');
+        currentOptionsContainer.appendChild(inputElement);
+        currentOptionsContainer.appendChild(submitButton);
+        console.log('[guided-exp] Appended fallback text input and button.');
 
-    // Add Enter key listener
-    inputElement.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleAISubmit(question.id, inputElement.value);
-        }
-    });
-    inputElement.focus();
+        inputElement.addEventListener('keypress', (e) => {
+             if (e.key === 'Enter') {
+                 e.preventDefault();
+                 handleAISubmit(question.id, inputElement.value);
+             }
+         });
+        inputElement.focus();
+    }
 
     updateAINavigation();
 }
@@ -248,78 +247,177 @@ function updateAINavigation() {
 // --- Result Handling ---
 
 async function finalizeAndShowResult() {
-    console.log("Finalizing results with answers:", aiAnswers);
+    console.log("Finalizing results by asking AI for recommendations based on answers:", aiAnswers);
     if(aiInteractionArea) aiInteractionArea.classList.add('hidden'); // Hide question area
     if(finalResultArea) finalResultArea.classList.remove('hidden'); // Show result area
     if(finalProductDisplay) finalProductDisplay.innerHTML = ''; // Clear previous result
 
-    displayAILoading("Finding the best match based on your answers...");
-
-    // ** TODO: Implement actual product filtering/selection logic here **
-    // This function needs to take `aiAnswers` and use them to search
-    // through the relevant product data (e.g., `window.bicycleData`).
-    // For now, it will just pick a random product from the detected sport category.
-    finalProductRecommendation = findBestMatchBasedOnAI(aiAnswers);
-
-    hideAILoading();
-
-    if (finalProductRecommendation) {
-        displayFinalProduct(finalProductRecommendation);
-    } else {
-        displayAIError("Couldn't find a suitable product based on your answers. Try searching again with different terms or answers.", true); // Allow search again
-    }
-}
-
-// ** Placeholder Filtering Logic - Needs Real Implementation **
-function findBestMatchBasedOnAI(answers) {
-    console.warn("findBestMatchBasedOnAI is using placeholder logic!");
-    const sport = answers.detected_sport;
-    let productPool = [];
+    displayAILoading("Asking the expert for the best match based on your answers...");
 
     try {
-         switch (sport?.toLowerCase()) {
-            case 'bicycles': productPool = window.bicycleData || []; break;
-            case 'baseball': productPool = window.baseballData || []; break;
-            case 'climbing': productPool = window.climbingData || []; break;
-            case 'soccer':   productPool = window.soccerData || []; break;
-            default: return null;
+        // --- Get AI Recommendation --- 
+        const recommendationResult = await getAIRecommendation(aiAnswers, currentAIQuestions);
+        hideAILoading();
+
+        if (recommendationResult && recommendationResult.products && recommendationResult.products.length > 0) {
+            console.log("AI Recommendation Result:", recommendationResult);
+            // Display the AI-generated recommendations
+            displayAIRecommendations(recommendationResult.products);
+        } else {
+            console.error("AI failed to provide recommendations.", recommendationResult);
+            displayAIError("Sorry, I couldn't come up with specific recommendations based on our conversation. Try searching again?", true);
         }
-    } catch (e) {
-        console.error("Error accessing product data for filtering:", e);
-        return null;
+    } catch (error) {
+        console.error("Error getting AI recommendation:", error);
+        hideAILoading();
+        displayAIError(`An error occurred while getting recommendations: ${error.message}. Please try again.`, true);
     }
-   
-
-    if (productPool.length === 0) {
-        console.log("No products available for sport:", sport);
-        return null;
-    }
-
-    // --- Add real filtering/scoring based on `answers` here --- 
-    // Example: Score products based on keyword matches in description/features vs answers.
-    // For now, just pick a random one from the pool.
-    const randomIndex = Math.floor(Math.random() * productPool.length);
-    console.log(`Placeholder: Selecting random product at index ${randomIndex} from ${productPool.length} options.`);
-    return productPool[randomIndex];
 }
 
-function displayFinalProduct(product) {
-    if (!finalProductDisplay) return;
-    console.log("Displaying final product:", product);
+// --- Function to get Recommendation from AI --- 
+async function getAIRecommendation(answers, questionsAsked) {
+    // 1. Format the conversation history
+    let conversationSummary = `Original Query: ${answers.initial_query}\nDetected Sport: ${answers.detected_sport}\n\n`;
+    questionsAsked.forEach((q, index) => {
+        const questionId = q.id;
+        const answer = answers[questionId];
+        if (answer) {
+            conversationSummary += `Q${index + 1}: ${q.question}\nA${index + 1}: ${answer}\n\n`;
+        }
+    });
+    console.log("Sending conversation summary to AI:", conversationSummary);
 
-    // Simple display - enhance this for a large visual
-    // Ensure product object has expected properties (name, image, description, price)
-    finalProductDisplay.innerHTML = `
-        <div class="final-product-card">
-             <img src="${product.images && product.images.length > 0 ? product.images[0] : 'img/placeholder.png'}" alt="${product.name || 'Product'}" class="final-product-image">
-             <h3>${product.name || 'Recommended Product'}</h3>
-             <p>${product.description || 'No description available.'}</p>
-             <div class="final-price">${product.price ? `$${product.price.toFixed(2)}` : 'Price unavailable'}</div>
-             ${product.discountedPrice ? `<div class="final-discount">Sale: $${product.discountedPrice.toFixed(2)}</div>` : ''}
-             <!-- Add more details or a 'View Details' button -->
-         </div>
-    `;
-    // Add CSS for .final-product-card, .final-product-image, .final-price, .final-discount
+    // 2. Define the recommendation prompt (can be refined)
+    const recommendationPrompt = {
+         model: 'gpt-3.5-turbo',
+         messages: [
+             {
+                 role: 'system',
+                 content: `You are a sports equipment expert. Based on the following conversation history (user query and Q&A), recommend 1 to 3 specific products. For each product, provide a name, a brief description of why it fits the user's needs based on their answers, and ideally key features (if known, otherwise omit). Avoid overly technical jargon. Focus on beginner-friendly options unless the conversation indicates otherwise. Respond ONLY in JSON format with a single key "products" which is an array of objects. Each object in the array should have keys: "name" (string), "reason" (string, explaining the fit), and optionally "features" (array of strings).`
+             },
+             {
+                 role: 'user',
+                 content: conversationSummary
+             }
+         ],
+         temperature: 0.6, 
+         response_format: { type: 'json_object' }
+     };
+
+    // 3. Call the AI (using the existing processor instance, assuming apiKey is set)
+    if (!aiProcessorSimplified || !aiProcessorSimplified.isConfigured) {
+        throw new Error("AI Processor not configured for recommendation call.");
+    }
+
+    try {
+        // Note: We might need a more generic method in AIQueryProcessor if we add more call types
+        // For now, let's reuse the fetch logic structure mentally
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${aiProcessorSimplified.apiKey.trim()}` 
+            },
+            body: JSON.stringify(recommendationPrompt)
+        });
+
+        console.log(`[AI Recommendation] API response status: ${response.status}`);
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+            console.error('OpenAI Recommendation API error:', data.error || `Status ${response.status}`);
+            throw new Error(data.error?.message || `API request failed with status ${response.status}`);
+        }
+
+        // Extract and parse the JSON content
+        if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+             try {
+                 const result = JSON.parse(data.choices[0].message.content);
+                 return result; // Should contain { products: [...] }
+             } catch (e) {
+                 console.error('Error parsing AI recommendation response:', e, data.choices[0].message.content);
+                 throw new Error('Failed to parse AI recommendation response.');
+             }
+        } else {
+             console.error('Invalid response structure from OpenAI recommendation API:', data);
+             throw new Error('Invalid response structure from AI.');
+        }
+
+    } catch (error) {
+        console.error('Error calling OpenAI for recommendation:', error);
+        throw error; // Re-throw the error to be caught by finalizeAndShowResult
+    }
+}
+
+
+// --- Display AI Recommendations --- 
+// (Replaces the old displayFinalProduct)
+function displayAIRecommendations(products) {
+    if (!finalProductDisplay) return;
+    console.log("Displaying AI recommendations:", products);
+
+    // Get the correct local product data pool based on the detected sport
+    let localProductPool = [];
+    try {
+         switch (currentAISport?.toLowerCase()) {
+            case 'bicycles': localProductPool = window.bicycleData || []; break;
+            case 'baseball': localProductPool = window.baseballData || []; break;
+            case 'climbing': localProductPool = window.climbingData || []; break;
+            case 'soccer':   localProductPool = window.soccerData || []; break;
+        }
+    } catch (e) {
+        console.error("Error accessing local product data for display:", e);
+    }
+
+    let htmlContent = '';
+    products.forEach((aiProduct, index) => {
+        // Find the matching product in the local data by name (case-insensitive)
+        const localProduct = localProductPool.find(p => 
+            p.name?.toLowerCase() === aiProduct.name?.toLowerCase()
+        );
+        
+        console.log(`AI recommended: ${aiProduct.name}, Local match found:`, localProduct);
+
+        // --- Determine Image and Price --- 
+        let imageUrl, price, discountedPrice;
+        let features = aiProduct.features || []; // Start with AI features
+
+        if (localProduct) {
+            // Use local data if found
+            imageUrl = localProduct.images?.[0] || localProduct.image || 'https://via.placeholder.com/400x300.png?text=Product+Image';
+            price = localProduct.price;
+            discountedPrice = localProduct.discountedPrice;
+            // If AI didn't provide features, use local ones
+            if (features.length === 0 && localProduct.features && localProduct.features.length > 0) {
+                features = localProduct.features;
+            }
+        } else {
+            // Fallback if local data not found
+            imageUrl = 'https://placehold.co/400x300/2a2a2a/eeeeee/png?text=Image+Not+Found'; // Different online placeholder
+            price = null; // No price info
+            discountedPrice = null;
+            // Keep AI features if available
+        }
+
+        // --- Generate HTML --- 
+        htmlContent += `
+            <div class="final-product-card ai-recommendation">
+                 <img src="${imageUrl}" alt="${aiProduct.name || 'Product'}" class="ai-recommendation-image">
+                 <h3>${index + 1}. ${aiProduct.name || 'Recommended Product'}</h3>
+                 ${price ? `<div class="ai-recommendation-price">${discountedPrice ? `<span class="original">$${price.toFixed(2)}</span> $${discountedPrice.toFixed(2)}` : `$${price.toFixed(2)}`}</div>` : ''}
+                 <p><strong>Why it fits:</strong> ${aiProduct.reason || 'No specific reason provided.'}</p>
+                 ${features.length > 0 
+                    ? `<h4>Key Features:</h4><ul>${features.map(f => `<li>${f}</li>`).join('')}</ul>` 
+                    : ''}
+             </div>
+        `;
+    });
+
+    if(htmlContent === '') { // Should not happen if products array is not empty, but safety check
+        htmlContent = `<p class="error-message">Could not display recommendations.</p>`;
+    }
+
+    finalProductDisplay.innerHTML = htmlContent;
 }
 
 

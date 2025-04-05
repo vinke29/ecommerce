@@ -68,14 +68,14 @@ class AIQueryProcessor {
                     messages: [
                         {
                             role: 'system',
-                            content: `You are a sports equipment advisor. Analyze the user's search query to understand their needs. Determine the sport (bicycles, baseball, climbing, soccer) and any mentioned product types or preferences (e.g., terrain type for bikes, material, skill level). Based on this analysis, generate 2-3 specific follow-up questions to clarify their needs and help narrow down product choices. The questions should be relevant to the detected sport and preferences. Respond ONLY in JSON format with the following fields: "sport" (one of the available sports or null if unclear), "confidence" (a number between 0 and 1), "product_type" (specific product type if detectable, or null), "user_preferences" (array of detected preferences), "suggested_questions" (array of 2-3 string questions).`
+                            content: `You are a very friendly and patient sports equipment advisor speaking to a complete beginner. Your goal is to help them find the right product even if they know nothing about the specifics. Analyze the user's search query. Determine the sport (bicycles, baseball, climbing, soccer). Generate a maximum of 3 simple follow-up questions to understand their needs (like intended use, environment, budget feel, or basic preferences – avoid technical terms like 'frame material' unless the user mentioned it). For EACH question, provide a list of 3-5 simple, easy-to-understand multiple-choice options. Respond ONLY in JSON format with the following fields: "sport", "confidence", "product_type", "user_preferences", "suggested_questions" (array of objects, each with "question" string and "options" array of strings).`
                         },
                         {
                             role: 'user',
                             content: query
                         }
                     ],
-                    temperature: 0.5, // Slightly increased for more creative question generation
+                    temperature: 0.7, // Slightly higher for more creative, less technical questions/options
                     response_format: { type: 'json_object' }
                 })
             });
